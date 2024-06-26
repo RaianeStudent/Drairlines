@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">drairlines</string>
+    <string name="ola"> Olá, </string>
+    <string name="criarConta"> Finalize o seu Cadastro! </string>
+    <string name="vamosVoar"> Vamos voar. Faça o seu Login!</string>
+    <string name="nome"> Digite o seu nome. </string>
+    <string name="senha"> Digite a sua senha. </string>
+    <string name="email"> Digite o seu email. </string>
+    <string name="cpf"> Digite o seu cpf. </string>
+    <string name="cadastrar"> Realizar Cadastro</string>
+    <string name="login"> Realizar Login</string>
+    <string name="naoTemConta"> Ainda não tem uma conta? Cadastre-se </string>
+    <string name="jaTemConta">  Já tem uma conta? Realize o Login </string>
+</resources>
