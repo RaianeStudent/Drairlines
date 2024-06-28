@@ -11,9 +11,11 @@ import com.example.drairlines.navigation.Tela
 import com.example.drairlines.pages.TelaCadastro
 import com.example.drairlines.pages.TelaHome
 import com.example.drairlines.pages.TelaLogin
+import com.example.drairlines.pages.TelaTrechos
 
 @Composable
 fun CiaAereaApp(){
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -28,6 +30,9 @@ fun CiaAereaApp(){
                 }
                 is Tela.TelaHome ->{
                     TelaHome()
+                }
+                is Tela.TelaTrecho -> {
+                    TelaTrechos()
                 }
             }
 

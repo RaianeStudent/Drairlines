@@ -7,6 +7,7 @@ sealed class Tela {
     object TelaCadastro : Tela()
     object TelaLogin : Tela()
     object TelaHome : Tela()
+    object TelaTrecho : Tela()
 }
 
 object CiaAereaAppRota {
@@ -15,4 +16,5 @@ object CiaAereaAppRota {
     fun navegateTo(destination: Tela) {
         telaAtual.value = destination
     }
+
 }

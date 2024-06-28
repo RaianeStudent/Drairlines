@@ -1,101 +1,107 @@
 package com.example.drairlines.data
 
-import android.util.Log
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.drairlines.MainActivity
 import com.example.drairlines.data.rules.Validador
+import com.example.drairlines.navigation.CiaAereaAppRota
+import com.example.drairlines.navigation.Tela
+import com.example.drairlines.network.SessionManager
+import com.example.drairlines.network.entity.LoginRequest
+import com.example.drairlines.network.repository.RetrofitHelper
+import dagger.hilt.android.qualifiers.ActivityContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
-    private val TAG = LoginViewModel::class.simpleName
 
-    var cadastroUIEstado = mutableStateOf(CadastroUIEstado())
+    @ActivityContext
+    lateinit var context: Context
 
-    var tudoValidado = mutableStateOf(false)
+    private lateinit var sessionManager: SessionManager
+    private lateinit var retrofitHelper : RetrofitHelper
+    var loginUIEstado = mutableStateOf(CadastroUIEstado())
 
-    fun onEvent(event: UIEvent) {
+    var dadosLoginValidado = mutableStateOf(false)
+
+    fun onEvent(event: LGEvent) {
         validarDados()
         when (event) {
-            is UIEvent.NomeAlterado -> {
-                cadastroUIEstado.value = cadastroUIEstado.value.copy(
-                    nome = event.nome
-                )
-
-            }
-
-            is UIEvent.EmailAlterado -> {
-                cadastroUIEstado.value = cadastroUIEstado.value.copy(
+            is LGEvent.EmailAlterado -> {
+                loginUIEstado.value = loginUIEstado.value.copy(
                     email = event.email
                 )
 
             }
 
-            is UIEvent.CpfAlterado -> {
-                cadastroUIEstado.value = cadastroUIEstado.value.copy(
-                    cpf = event.cpf
-                )
-
-            }
-
-            is UIEvent.SenhaAlterado -> {
-                cadastroUIEstado.value = cadastroUIEstado.value.copy(
+            is LGEvent.SenhaAlterado -> {
+                loginUIEstado.value = loginUIEstado.value.copy(
                     senha = event.senha
                 )
 
             }
 
-            is UIEvent.BotaoCadastrarApertado -> {
-                cadastrar()
+            is LGEvent.BotaoLoginApertado -> {
+                    login(loginUIEstado.value.email, loginUIEstado.value.senha)
+
             }
         }
     }
 
-    private fun cadastrar() {
-        criandoUsuario(
-            email = cadastroUIEstado.value.email,
-            senha = cadastroUIEstado.value.senha,
-            cpf = cadastroUIEstado.value.cpf,
-            nome = cadastroUIEstado.value.nome
-        )
-    }
-
     private fun validarDados() {
-        val nomeResultado = Validador.validarNome(
-            nome = cadastroUIEstado.value.nome
-        )
 
         val emailResultado = Validador.validarEmail(
-            email = cadastroUIEstado.value.email
-        )
-
-        val cpfResultado = Validador.validarCpf(
-            cpf = cadastroUIEstado.value.cpf
+            email = loginUIEstado.value.email
         )
 
         val senhaResultado = Validador.validarSenha(
-            senha = cadastroUIEstado.value.senha
+            senha = loginUIEstado.value.senha
         )
 
-        cadastroUIEstado.value = cadastroUIEstado.value.copy(
-            nomeError = nomeResultado.status,
+        loginUIEstado.value = loginUIEstado.value.copy(
             emailError = emailResultado.status,
-            cpfError = cpfResultado.status,
             senhaError = senhaResultado.status
         )
 
-        if (nomeResultado.status && emailResultado.status && cpfResultado.status && senhaResultado.status ) {
-            tudoValidado .value= true
+        if (emailResultado.status && senhaResultado.status ) {
+            dadosLoginValidado.value= true
         } else {
-            tudoValidado.value=false
+            dadosLoginValidado.value=false
         }
     }
 
-    private fun printState() {
-        Log.d(TAG, "LOGAAAANDO")
-        Log.d(TAG, cadastroUIEstado.value.toString())
-    }
+     fun login(email: String, senha: String) {
+        System.out.println("PAASSSOU LOGIN")
+        //viewModelScope.launch {
 
-    fun criandoUsuario(email: String, senha: String, cpf: String, nome: String){
+         CoroutineScope(Dispatchers.IO).launch{
 
+             try {
+                 retrofitHelper = RetrofitHelper()
 
-    }
+                 sessionManager = SessionManager(MainActivity.appContext)
+                 sessionManager.revokeAuthToken()
+                 var apiService = retrofitHelper.getApiService(MainActivity.appContext)
+                 val response = apiService.realizarLogin(LoginRequest(email, senha))
+
+                 if (response.isSuccessful) {
+                     response.body()?.let { sessionManager.saveAuthToken(it.token) }
+                     CiaAereaAppRota.navegateTo(Tela.TelaHome)
+                 } else if (response.code() == 403) {
+                    loginUIEstado.value = loginUIEstado.value.copy(
+                        senhaError = false
+                    )
+
+                 }
+
+             } catch (e: Exception) {
+                 sessionManager.revokeAuthToken()
+                 e.printStackTrace()
+             }
+         }
+        }
+    //}
+
 }

@@ -15,6 +15,12 @@ object Validador {
         )
     }
 
+    fun validarData(data:String) : ResultadoValidacao{
+        return ResultadoValidacao(
+            (data.isNotEmpty())
+        )
+    }
+
     fun validarCpf(cpf:String) : ResultadoValidacao{
         return ResultadoValidacao(
             (!cpf.isNullOrEmpty() && (cpf.length > 8 && cpf.length <= 11))

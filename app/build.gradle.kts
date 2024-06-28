@@ -73,25 +73,33 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     // Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    // Retrofit with Kotlin serialization Converter
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+    implementation(libs.retrofit)
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     // Kotlin serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+   // implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     // Datastore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
 
-    implementation("com.google.dagger:dagger:2.27")
-    annotationProcessor("com.google.dagger:dagger-compiler:2.27")
+    implementation("com.google.dagger:dagger:2.44")
+    annotationProcessor("com.google.dagger:dagger-compiler:2.44")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
-    implementation("com.squareup.retrofit2:converter-moshi:2.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation(libs.converter.moshi)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation("com.google.dagger:hilt-android:2.31-alpha")
+    kapt("com.google.dagger:hilt-android-compiler:2.28-alpha")
 
+    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
+    implementation(libs.converter.gson)
+
+    val composeBom = platform("androidx.compose:compose-bom:2024.05.00")
+    implementation(composeBom)
+
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    implementation("androidx.compose.ui:ui-tooling-preview")
 
 }
 
